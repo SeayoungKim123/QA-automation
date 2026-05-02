@@ -7,11 +7,14 @@ environments/dev.md
 environments/stage.md
 environments/prd.md
 
-# 실행 리포트 (회차별 결과는 추적 X, _sample/reports/ 는 샘플이므로 별도 추적)
-reports/RUN-*/
+# 실행 리포트 — 모든 휘발성 산출물 ignore
+# 추적 O: templates/* (빈 양식 source of truth)
+# 추적 X: reports/ 의 모든 라이브 파일 (첫 실행 시 templates/ 에서 복사)
+reports/dashboard.html
+reports/data.js
 reports/STATUS.md
 reports/HISTORY.md
-reports/dashboard.html
+reports/RUN-*/
 
 # OS / 에디터
 .DS_Store

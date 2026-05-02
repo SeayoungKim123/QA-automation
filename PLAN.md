@@ -98,13 +98,20 @@ QA-automation/
 | 레벨 | 파일 | 역할 | 갱신 시점 |
 |---|---|---|---|
 | **현황판** | `reports/STATUS.md` | 누적 통계·진행도·통과율을 한 화면에 (텍스트) | 매 실행 후 덮어쓰기 |
-| **시각 대시보드** | `reports/dashboard.html` | KPI·도넛·막대·추세선·이슈·이력 (브라우저용) | 매 실행 후 덮어쓰기 |
+| **시각 대시보드 (구조)** | `reports/dashboard.html` | KPI·시나리오·TC·이슈·이력 표시 — 정적 구조 + 렌더링 JS | 거의 변경 X (구조 개편 시만) |
+| **시각 대시보드 (데이터)** | `reports/data.js` | `window.QA_DATA = {...}` 형태의 회차 데이터 | 매 실행 후 덮어쓰기 |
 | **시계열 로그** | `reports/HISTORY.md` | 회차별 한 줄씩 append | 매 실행 후 추가 |
 | **개별 상세** | `reports/{RUN-ID}/` | 그 회차의 스크린샷·실패 로그 | 실행 시 신규 생성 |
 
 **RUN ID 규칙**: `RUN-YYYYMMDD-HHMM-{환경}`  예: `RUN-20260502-1430-dev`
 
-**시각화 정책**: 시각화는 `dashboard.html` 단일 파일로 통일. STATUS.md 는 텍스트 요약만 담음(차트 임베드 X). 양식 샘플은 `_sample/dashboard.html` 참조.
+**시각화 정책**: `dashboard.html` 은 구조만 담는 정적 자산이고, 매 실행 후 메인 Claude 가 갱신하는 것은 `data.js` 한 파일뿐.
+
+**source of truth**: 빈 양식 일체는 `templates/` 가 source of truth (추적 O).
+- `templates/dashboard.html` · `templates/STATUS.md` · `templates/HISTORY.md`
+- `reports/` 는 전체 ignore (휘발성). 첫 실행 또는 파일 누락 시 메인 Claude 가 `templates/` → `reports/` 로 복사 후 `data.js` 생성.
+
+**양식 미리보기**: `_sample/reports/` 참조 (self-contained, 추적 O).
 
 **보조**: 각 시나리오 파일 하단에 "최근 실행 결과" 표를 자동 갱신 → 시나리오 단위 즉답.
 
