@@ -1,0 +1,10 @@
+실제 실행 시 이 폴더에 PNG 스크린샷이 저장됩니다.
+
+파일명 규칙:
+{시나리오슬러그}-{tcXX}-{stepXX}-{설명}.png
+
+예시:
+- signup-tc01-step1.png
+- signup-tc04-no-mail.png
+- pay-tc03-spinner.png
+- pay-tc04-still-paid.png

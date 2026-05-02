@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>QA 자동화 대시보드 (샘플) — RUN-20260502-1430-dev</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 32px 24px;
+    line-height: 1.5;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+  h1 { font-size: 26px; font-weight: 700; }
+  .meta { color: #64748b; font-size: 13px; margin-top: 4px; }
+  .env-badge {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    background: #dbeafe; color: #1e40af; font-size: 12px; font-weight: 600;
+  }
+  .updated { font-size: 12px; color: #64748b; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .card {
+    background: white; border-radius: 12px; padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    border: 1px solid #e2e8f0;
+  }
+  .kpi-label { color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .kpi-value { font-size: 32px; font-weight: 700; margin-top: 8px; line-height: 1; }
+  .kpi-sub { font-size: 12px; color: #64748b; margin-top: 6px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 24px; }
+  .section-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: #0f172a; }
+
+  /* Donut */
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; }
+  .donut { position: relative; width: 200px; height: 200px; }
+  .donut-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .donut-pct { font-size: 40px; font-weight: 700; }
+  .donut-sub { font-size: 12px; color: #64748b; margin-top: 4px; }
+  .legend { display: flex; gap: 16px; margin-top: 16px; font-size: 12px; }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+  /* Bars */
+  .scenario-row { display: grid; grid-template-columns: 110px 1fr 110px; gap: 12px; align-items: center; padding: 10px 0; }
+  .scenario-row + .scenario-row { border-top: 1px solid #f1f5f9; }
+  .scenario-name { font-size: 14px; font-weight: 500; }
+  .bar-track { background: #e2e8f0; height: 12px; border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; }
+  .bar-pass { background: #10b981; }
+  .bar-warn { background: #f59e0b; }
+  .bar-fail { background: #ef4444; }
+  .scenario-stat { text-align: right; font-size: 13px; color: #475569; font-variant-numeric: tabular-nums; }
+
+  /* Trend */
+  .trend-svg { width: 100%; height: 220px; }
+
+  /* Table */
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th { text-align: left; padding: 12px 16px; background: #f8fafc; font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
+  .tbl td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .mono { font-family: "SF Mono", Consolas, "Cascadia Code", monospace; font-size: 12.5px; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-p0 { background: #fef2f2; color: #b91c1c; }
+  .badge-p1 { background: #fffbeb; color: #b45309; }
+  .badge-pass { background: #f0fdf4; color: #15803d; }
+  .badge-warn { background: #fffbeb; color: #b45309; }
+  .badge-fail { background: #fef2f2; color: #b91c1c; }
+  .badge-new { background: #ede9fe; color: #6d28d9; margin-left: 4px; }
+
+  .section-card { margin-bottom: 24px; }
+
+  footer { margin-top: 32px; text-align: center; color: #94a3b8; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>QA 자동화 대시보드 <span style="font-size:13px;color:#94a3b8;font-weight:400;">(샘플)</span></h1>
+      <div class="meta">
+        <span class="env-badge">dev</span>
+        &nbsp;RUN-20260502-1430-dev
+      </div>
+    </div>
+    <div class="updated">최종 업데이트: 2026-05-02 14:35</div>
+  </header>
+
+  <!-- KPI Cards -->
+  <div class="kpis">
+    <div class="card">
+      <div class="kpi-label">전체 실행 횟수</div>
+      <div class="kpi-value">5</div>
+      <div class="kpi-sub">dev 5 · stage 0 · prd 0</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">최근 회차 통과율</div>
+      <div class="kpi-value" style="color: #f59e0b;">75%</div>
+      <div class="kpi-sub">9 Pass · 3 Fail</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">미해결 이슈</div>
+      <div class="kpi-value" style="color: #ef4444;">3</div>
+      <div class="kpi-sub">P0 2건 · P1 1건</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">시나리오 / TC</div>
+      <div class="kpi-value">3 <span style="font-size:18px;color:#94a3b8;font-weight:500;">/ 12</span></div>
+      <div class="kpi-sub">시나리오 / 테스트 케이스</div>
+    </div>
+  </div>
+
+  <!-- Donut + Bars -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title">최근 회차 결과</div>
+      <div class="donut-wrap">
+        <div class="donut">
+          <svg viewBox="0 0 36 36" width="200" height="200">
+            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#fee2e2" stroke-width="3.5"/>
+            <circle cx="18" cy="18" r="15.915" fill="none" stroke="#10b981" stroke-width="3.5"
+                    stroke-dasharray="75 25" stroke-dashoffset="25" transform="rotate(-90 18 18)"/>
+          </svg>
+          <div class="donut-text">
+            <div class="donut-pct" style="color: #10b981;">75%</div>
+            <div class="donut-sub">9 / 12 TC</div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><span class="legend-dot" style="background:#10b981;"></span>Pass 9</span>
+          <span><span class="legend-dot" style="background:#fee2e2;"></span>Fail 3</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">시나리오별 누적 통과율</div>
+      <div class="scenario-row">
+        <span class="scenario-name">01 회원가입</span>
+        <div class="bar-track"><div class="bar-fill bar-warn" style="width: 88%;"></div></div>
+        <span class="scenario-stat">88% · 22/25</span>
+      </div>
+      <div class="scenario-row">
+        <span class="scenario-name">02 로그인</span>
+        <div class="bar-track"><div class="bar-fill bar-pass" style="width: 100%;"></div></div>
+        <span class="scenario-stat">100% · 15/15</span>
+      </div>
+      <div class="scenario-row">
+        <span class="scenario-name">03 결제</span>
+        <div class="bar-track"><div class="bar-fill bar-fail" style="width: 70%;"></div></div>
+        <span class="scenario-stat">70% · 14/20</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trend -->
+  <div class="card section-card">
+    <div class="section-title">통과율 추세 (최근 5회)</div>
+    <svg class="trend-svg" viewBox="0 0 600 220" preserveAspectRatio="none">
+      <line x1="50" y1="20"  x2="590" y2="20"  stroke="#e2e8f0" stroke-width="1"/>
+      <line x1="50" y1="65"  x2="590" y2="65"  stroke="#e2e8f0" stroke-width="1"/>
+      <line x1="50" y1="110" x2="590" y2="110" stroke="#e2e8f0" stroke-width="1"/>
+      <line x1="50" y1="155" x2="590" y2="155" stroke="#e2e8f0" stroke-width="1"/>
+      <line x1="50" y1="180" x2="590" y2="180" stroke="#cbd5e1" stroke-width="1"/>
+
+      <text x="44" y="24"  text-anchor="end" font-size="10" fill="#94a3b8">100%</text>
+      <text x="44" y="69"  text-anchor="end" font-size="10" fill="#94a3b8">75%</text>
+      <text x="44" y="114" text-anchor="end" font-size="10" fill="#94a3b8">50%</text>
+      <text x="44" y="159" text-anchor="end" font-size="10" fill="#94a3b8">25%</text>
+      <text x="44" y="184" text-anchor="end" font-size="10" fill="#94a3b8">0%</text>
+
+      <!-- 100, 83, 75, 50, 75 -->
+      <polyline points="100,20 220,50.6 340,60 460,100 580,60"
+                fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+      <circle cx="100" cy="20"   r="5" fill="#10b981" stroke="white" stroke-width="2"/>
+      <circle cx="220" cy="50.6" r="5" fill="#f59e0b" stroke="white" stroke-width="2"/>
+      <circle cx="340" cy="60"   r="5" fill="#f59e0b" stroke="white" stroke-width="2"/>
+      <circle cx="460" cy="100"  r="5" fill="#ef4444" stroke="white" stroke-width="2"/>
+      <circle cx="580" cy="60"   r="5" fill="#f59e0b" stroke="white" stroke-width="2"/>
+
+      <text x="100" y="200" text-anchor="middle" font-size="11" fill="#64748b">04/28</text>
+      <text x="220" y="200" text-anchor="middle" font-size="11" fill="#64748b">04/30</text>
+      <text x="340" y="200" text-anchor="middle" font-size="11" fill="#64748b">05/01a</text>
+      <text x="460" y="200" text-anchor="middle" font-size="11" fill="#64748b">05/01b</text>
+      <text x="580" y="200" text-anchor="middle" font-size="11" fill="#64748b">05/02</text>
+
+      <text x="100" y="12" text-anchor="middle" font-size="10" fill="#0f172a" font-weight="600">100%</text>
+      <text x="220" y="42" text-anchor="middle" font-size="10" fill="#0f172a" font-weight="600">83%</text>
+      <text x="340" y="52" text-anchor="middle" font-size="10" fill="#0f172a" font-weight="600">75%</text>
+      <text x="460" y="92" text-anchor="middle" font-size="10" fill="#0f172a" font-weight="600">50%</text>
+      <text x="580" y="52" text-anchor="middle" font-size="10" fill="#0f172a" font-weight="600">75%</text>
+    </svg>
+  </div>
+
+  <!-- Issues -->
+  <div class="card section-card">
+    <div class="section-title">미해결 이슈 (3건)</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>우선순위</th>
+          <th>시나리오</th>
+          <th>TC</th>
+          <th>증상</th>
+          <th>최초 발견</th>
+          <th>연속 실패</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-p0">P0</span></td>
+          <td>03-결제</td>
+          <td class="mono">TC-04</td>
+          <td>결제 취소 후 상태가 '결제완료'로 잔존<span class="badge badge-new">신규</span></td>
+          <td class="mono">RUN-20260502-1430</td>
+          <td>1회</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-p0">P0</span></td>
+          <td>03-결제</td>
+          <td class="mono">TC-03</td>
+          <td>카드 거절 시 무한 로딩, 에러 페이지 미노출</td>
+          <td class="mono">RUN-20260430-1100</td>
+          <td><strong style="color:#b91c1c;">3회</strong></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-p1">P1</span></td>
+          <td>01-회원가입</td>
+          <td class="mono">TC-04</td>
+          <td>인증 메일 재전송 시 메일 미수신</td>
+          <td class="mono">RUN-20260501-0930</td>
+          <td>2회</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- History -->
+  <div class="card">
+    <div class="section-title">최근 실행 이력</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>RUN-ID</th>
+          <th>일시</th>
+          <th>환경</th>
+          <th>대상</th>
+          <th>결과</th>
+          <th>소요</th>
+          <th>비고</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">RUN-20260502-1430-dev</td>
+          <td>05-02 14:30</td>
+          <td>dev</td>
+          <td>전체 3건</td>
+          <td><span class="badge badge-warn">9P / 3F</span></td>
+          <td>4m 25s</td>
+          <td>결제 TC-04 신규 fail</td>
+        </tr>
+        <tr>
+          <td class="mono">RUN-20260501-1645-dev</td>
+          <td>05-01 16:45</td>
+          <td>dev</td>
+          <td>결제만</td>
+          <td><span class="badge badge-fail">2P / 2F</span></td>
+          <td>1m 11s</td>
+          <td>결제 미해결 확인</td>
+        </tr>
+        <tr>
+          <td class="mono">RUN-20260501-0930-dev</td>
+          <td>05-01 09:30</td>
+          <td>dev</td>
+          <td>전체 3건</td>
+          <td><span class="badge badge-warn">9P / 3F</span></td>
+          <td>4m 33s</td>
+          <td>회원가입 TC-04 신규 회귀</td>
+        </tr>
+        <tr>
+          <td class="mono">RUN-20260430-1100-dev</td>
+          <td>04-30 11:00</td>
+          <td>dev</td>
+          <td>전체 3건</td>
+          <td><span class="badge badge-warn">10P / 2F</span></td>
+          <td>4m 18s</td>
+          <td>결제 TC-03 신규 회귀</td>
+        </tr>
+        <tr>
+          <td class="mono">RUN-20260428-1015-dev</td>
+          <td>04-28 10:15</td>
+          <td>dev</td>
+          <td>회원가입</td>
+          <td><span class="badge badge-pass">5P / 0F</span></td>
+          <td>1m 42s</td>
+          <td>baseline 통과</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    QA 자동화 대시보드 — Generated by Claude Code · 매 실행 후 자동 갱신
+  </footer>
+</div>
+</body>
+</html>

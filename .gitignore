@@ -1,0 +1,25 @@
+# Claude Code 로컬 설정 (사용자별)
+.claude/settings.local.json
+
+# 환경별 민감정보 (URL·계정·비밀번호·테스트카드 포함)
+# 신규 환경 추가 시 environments/_template.md 를 복사해 사용
+environments/dev.md
+environments/stage.md
+environments/prd.md
+
+# 실행 리포트 (회차별 결과는 추적 X, _sample/reports/ 는 샘플이므로 별도 추적)
+reports/RUN-*/
+reports/STATUS.md
+reports/HISTORY.md
+reports/dashboard.html
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Node (혹시 추후 도구 추가 시)
+node_modules/
+npm-debug.log*
