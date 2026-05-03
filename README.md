@@ -6,7 +6,7 @@ PM이 자연어로 시나리오를 작성하고, Claude가 브라우저를 직�
 
 | 폴더 | 용도 |
 |---|---|
-| `specs/` | 기획서·정책서 원본 (PDF/DOCX/MD) |
+| `specs/` | 기획서·정책서 등 참고 자료 원본 (PDF/DOCX/MD) |
 | `scenarios/` | 자연어 테스트 시나리오 (`_template.md` 참고) |
 | `environments/` | 환경별 URL·계정 (dev/stage/prd) |
 | `reports/` | 테스트 실행 결과 |
