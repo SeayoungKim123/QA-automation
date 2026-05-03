@@ -106,8 +106,8 @@ QA-automation/
 **시각화 정책**: `dashboard.html` 은 구조만 담는 정적 자산이고, 매 실행 후 메인 Claude 가 갱신하는 것은 `data.js` 한 파일뿐.
 
 **source of truth**: 빈 양식 일체는 `templates/` 가 source of truth (추적 O).
-- `templates/dashboard.html` · `templates/STATUS.md` · `templates/HISTORY.md`
-- `reports/` 는 전체 ignore (휘발성). 첫 실행 또는 파일 누락 시 메인 Claude 가 `templates/` → `reports/` 로 복사 후 `data.js` 생성.
+- `templates/dashboard.html` · `templates/STATUS.md` · `templates/HISTORY.md` · `templates/data.js`
+- `reports/` 는 전체 ignore (휘발성). 첫 실행 또는 파일 누락 시 메인 Claude 가 `templates/` → `reports/` 로 복사. 매 실행 후 `reports/data.js` 만 새 데이터로 덮어쓰기.
 
 **양식 미리보기**: `_sample/reports/` 참조 (self-contained, 추적 O).
 
