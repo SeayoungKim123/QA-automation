@@ -2,6 +2,7 @@
 name: qa-run
 description: 시나리오 1개를 격리된 컨텍스트에서 실행하는 QA 자동화 Skill. Playwright MCP 로 브라우저를 조작해 시나리오 안의 모든 테스트 케이스를 수행하고, 각 TC 결과를 progress.jsonl 에 즉시 기록한다. 시나리오 종료 시 result.md 를 작성하고 메인 대화로 요약만 반환한다. 호출 예: 사용자가 "회원가입 시나리오 dev에서 실행해줘" 또는 "/qa-run 회원가입 dev" 라고 요청할 때 메인 Claude 가 시나리오마다 한 번씩 invoke 한다.
 context: fork
+model: sonnet
 ---
 
 # /qa-run — QA 시나리오 실행 (격리)
@@ -100,7 +101,7 @@ TC 가 끝나는 즉시 (다음 TC 로 넘어가기 전) 다음 형식의 JSON �
 (모든 TC 반복)
 
 ## 정책 참조
-- `specs/정책서/...`
+- `specs/...`
 ```
 
 ### 2) 메인에 반환할 요약 (300단어 이내)
