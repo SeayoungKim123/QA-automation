@@ -23,6 +23,10 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Playwright MCP 작업 폴더 / 검증용 스크린샷
+.playwright-mcp/
+dashboard-*.png
+
 # Node (혹시 추후 도구 추가 시)
 node_modules/
 npm-debug.log*
