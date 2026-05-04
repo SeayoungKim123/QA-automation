@@ -22,7 +22,11 @@ window.QA_DATA = {
     tc_count: 0,
   },
 
-  // 최근 회차의 시나리오·TC 결과
+  // 전체 시나리오·TC 카탈로그 (scenarios/*.md 의 전체) + 최근 회차 결과 오버레이.
+  // 메인 Claude 가 매 실행 후 scenarios/ 폴더를 스캔해 빌드하고, 이번 회차 결과를 status 에 채움.
+  // 파일명(=id) 오름차순 정렬 권장.
+  // status: "PASS" | "FAIL" | "—" (미실행) — PASS/FAIL 이 아니면 회색 "—" 뱃지로 렌더됨.
+  // pass: 이번 회차에서 PASS 한 TC 수, total: 시나리오 전체 TC 수 (실행 여부 무관).
   scenarios: [
     // {
     //   id: "01-회원가입",
@@ -32,6 +36,7 @@ window.QA_DATA = {
     //     { id: "TC-01", name: "정상 가입",       tag: "",     status: "PASS" },
     //     { id: "TC-02", name: "중복 이메일",     tag: "",     status: "PASS" },
     //     { id: "TC-03", name: "비밀번호 정책",   tag: "신규", status: "FAIL" },
+    //     { id: "TC-04", name: "인증 메일 재전송", tag: "",     status: "—"   },  // 미실행
     //   ],
     // },
   ],

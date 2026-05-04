@@ -17,14 +17,17 @@ PM(대표님)이 자연어 시나리오만 작성하고, Claude 가 Playwright M
                   │  RUN-ID 생성, reports/{RUN-ID}/ 초기화
                   │  시나리오마다 ↓ 호출
                   ▼
-              /qa-run Skill (context: fork, sonnet)   ← 격리
+              /qa-run Skill (context: fork, sonnet)   ← 격리, 순차 dispatch
                   │  Playwright MCP 로 브라우저 조작
                   │  TC 끝날 때마다 progress.jsonl 즉시 append
-                  │  시나리오 종료 시 result.md 작성
+                  │  시나리오 종료 시:
+                  │    ├ result.md 작성
+                  │    ├ data.js 풀 빌드 + 덮어쓰기 (대시보드 즉시 반영)
+                  │    └ scenarios/{시나리오}.md 의 "최근 실행 결과" 표 갱신
                   ▼  요약만 반환 (스크린샷·DOM 본문 절대 X)
               메인 Claude (마무리)
-                  │  HISTORY.md append, STATUS.md / data.js 덮어쓰기
-                  │  각 시나리오 파일 하단 "최근 실행 결과" 표 갱신
+                  │  HISTORY.md append, STATUS.md 덮어쓰기
+                  │  data.js 의 issues / history / total_runs 영역만 보강
 ```
 
 - Skill 정의: `.claude/skills/qa-run/SKILL.md` — 시나리오 1개 실행의 모든 절차·규칙이 여기에 있음. 시나리오 실행 로직을 수정할 때는 이 파일이 단일 출처.
@@ -53,17 +56,19 @@ PM(대표님)이 자연어 시나리오만 작성하고, Claude 가 Playwright M
 |---|---|---|
 | `reports/{RUN-ID}/progress.jsonl` | TC 끝날 때마다 1줄 append | `/qa-run` Skill (즉시) |
 | `reports/{RUN-ID}/{시나리오}_result.md` | 시나리오 종료 시 | `/qa-run` Skill |
+| `reports/data.js` (`scenarios` / `kpis` / `meta`) | **시나리오 종료 시마다 풀 빌드 + 덮어쓰기** | **`/qa-run` Skill** |
+| `reports/data.js` (`issues` / `history` / `total_runs` / `runs_by_env`) | RUN 전체 종료 시 보강 | 메인 Claude |
 | `reports/STATUS.md` | 매 실행 후 덮어쓰기 | 메인 Claude |
 | `reports/HISTORY.md` | 매 실행 후 한 줄 append | 메인 Claude |
-| `reports/data.js` | 매 실행 후 덮어쓰기 | 메인 Claude |
+| `scenarios/{시나리오}.md` 하단 "최근 실행 결과" 표 | **시나리오 종료 시** (자기 시나리오만, 최신 5행 유지) | **`/qa-run` Skill** |
 | `reports/dashboard.html` | 거의 변경 X (구조 개편 시만) | 사람 |
-| `scenarios/{시나리오}.md` 하단 "최근 실행 결과" 표 | 매 실행 후 갱신 | 메인 Claude |
 
 ## 시각화 정책
 
 - 단일 HTML 대시보드 + `data.js` 분리 구조. **`dashboard.html` 은 구조·렌더링 JS 만, 데이터는 전부 `data.js`** (`window.QA_DATA`).
 - 매 실행 후 메인이 갱신하는 것은 **`reports/data.js` 한 파일뿐**. 스키마 주체는 `templates/dashboard.html` 의 렌더링 JS.
 - 마크다운에는 mermaid 등 차트 임베드 금지. 시각화는 대시보드에서만.
+- **"전체 시나리오 / TC" 영역은 카탈로그 + 오버레이**. `data.js` 의 `scenarios` 배열은 최근 회차 실행분이 아니라 `scenarios/*.md` 의 **전체 시나리오·TC 카탈로그**여야 한다. 메인 Claude 는 매 실행 후 `data.js` 작성 시 `scenarios/` 폴더를 스캔해 카탈로그를 빌드(파일명 오름차순)하고, 이번 회차 결과를 각 TC 의 `status`(`PASS`/`FAIL`/`—`)에 오버레이한다. 이번 회차에 실행되지 않은 TC 는 `status: "—"`.
 
 ## Playwright MCP
 

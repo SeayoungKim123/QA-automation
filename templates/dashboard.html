@@ -64,6 +64,7 @@
   .badge-pass { background: #f0fdf4; color: #15803d; }
   .badge-warn { background: #fffbeb; color: #b45309; }
   .badge-fail { background: #fef2f2; color: #b91c1c; }
+  .badge-skip { background: #f1f5f9; color: #94a3b8; }
   .badge-new { background: #ede9fe; color: #6d28d9; margin-left: 4px; }
 
   .empty-state { color: #94a3b8; font-size: 14px; padding: 40px 0; text-align: center; }
@@ -112,7 +113,7 @@
 
   <!-- Scenario / TC 상세 -->
   <div class="card section-card">
-    <div class="section-title">시나리오 / TC 상세 (최근 회차)</div>
+    <div class="section-title">전체 시나리오 / TC <span style="font-weight:400;color:#94a3b8;">(최근 회차 결과 오버레이)</span></div>
     <div id="scenario-list">
       <div class="empty-state">
         <div class="empty-icon">📋</div>
@@ -221,27 +222,36 @@
   $('tc-count').textContent = k.tc_count ?? 0;
 
   // --- Scenarios / TC ---
+  // scenarios = 전체 카탈로그. status 가 PASS/FAIL 이 아니면 (—, 미실행, null 등) 미실행으로 간주.
   const scenarios = data.scenarios || [];
   if (scenarios.length > 0) {
     $('scenario-list').innerHTML = scenarios.map((s) => {
-      const rows = (s.tcs || []).map((tc) => {
+      const tcs = s.tcs || [];
+      const skipCount = tcs.filter((tc) => tc.status !== 'PASS' && tc.status !== 'FAIL').length;
+      const statText = skipCount > 0
+        ? `${s.pass ?? 0} / ${s.total ?? tcs.length} Pass · ${skipCount} 미실행`
+        : `${s.pass ?? 0} / ${s.total ?? tcs.length} Pass`;
+      const rows = tcs.map((tc) => {
         const tagHtml = tc.tag === '신규'
           ? '<span class="badge badge-new" style="margin:0;">신규</span>'
           : escapeHtml(tc.tag || '');
-        const statusClass = tc.status === 'PASS' ? 'badge-pass' : 'badge-fail';
+        const isPass = tc.status === 'PASS';
+        const isFail = tc.status === 'FAIL';
+        const statusClass = isPass ? 'badge-pass' : isFail ? 'badge-fail' : 'badge-skip';
+        const statusText = (isPass || isFail) ? tc.status : '—';
         return `
           <tr>
             <td class="tc-id">${escapeHtml(tc.id)}</td>
             <td class="tc-name">${escapeHtml(tc.name)}</td>
             <td class="tc-tag">${tagHtml}</td>
-            <td class="tc-status"><span class="badge ${statusClass}">${escapeHtml(tc.status)}</span></td>
+            <td class="tc-status"><span class="badge ${statusClass}">${statusText}</span></td>
           </tr>`;
       }).join('');
       return `
         <div class="tc-block">
           <div class="tc-block-header">
             <span class="tc-block-title">${escapeHtml(s.id)}</span>
-            <span class="tc-block-stat">${s.pass} / ${s.total} Pass</span>
+            <span class="tc-block-stat">${statText}</span>
           </div>
           <table class="tc-list">${rows}</table>
         </div>`;

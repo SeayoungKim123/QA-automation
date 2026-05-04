@@ -104,7 +104,43 @@ TC 가 끝나는 즉시 (다음 TC 로 넘어가기 전) 다음 형식의 JSON �
 - `specs/...`
 ```
 
-### 2) 메인에 반환할 요약 (300단어 이내)
+### 2) `reports/data.js` 갱신 (대시보드 즉시 반영)
+
+시나리오가 끝날 때마다 다음 절차로 `reports/data.js` 를 **풀 빌드 + 덮어쓰기**. 대표님이 도중에 대시보드를 열어도 직전 시나리오까지의 결과가 보이도록 하기 위함.
+
+알고리즘:
+1. **카탈로그 빌드**: `scenarios/*.md` (단, `_template.md` 제외) 전체를 파일명 오름차순으로 스캔. 각 파일에서 시나리오 ID(파일명 stem) · TC 목록(TC-XX + 이름) 추출.
+2. **결과 맵 빌드**: `reports/{RUN-ID}/progress.jsonl` 전체 read. `(시나리오, TC)` 키로 최신 result(`PASS`/`FAIL`/`SKIP`/`BLOCKED`) 매핑.
+3. **머지**: 카탈로그 위에 결과 맵 오버레이.
+   - PASS → `status: "PASS"`
+   - FAIL/SKIP/BLOCKED → `status: "FAIL"` (대시보드는 PASS/FAIL/— 3분기만 인식)
+   - 결과 없음 → `status: "—"` (미실행)
+4. **KPI 재계산** (`kpis` 객체):
+   - `pass`: 전체 PASS 개수
+   - `fail`: 전체 FAIL 개수
+   - `pass_rate`: `round(pass / (pass+fail) * 100)` — pass+fail = 0 이면 `null`
+   - `scenario_count`: 카탈로그 시나리오 수
+   - `tc_count`: 카탈로그 TC 총수
+5. **`meta` 갱신**: `run_id`, `env`, `updated_at`(현재 시각 `YYYY-MM-DD HH:MM`)
+6. **유지**: `issues`, `history`, `kpis.total_runs`, `kpis.runs_by_env`, `kpis.open_issues`, `kpis.issues_breakdown` 은 **기존 `data.js` 에서 그대로 read 해서 다시 씀**. 이 영역은 메인 Claude 가 RUN 단위로 마무리에 갱신함.
+7. **빈 카탈로그 방어**: `scenarios/` 가 비어 있거나 스캔 실패 시 기존 `data.js` 보존, 메인 반환 요약에 한 줄 경고.
+
+> ⚠️ 동시 실행 금지: 시나리오는 순차 dispatch 가정. 두 Skill 이 동시에 `data.js` 를 쓰면 race 발생.
+
+### 3) `scenarios/{시나리오}.md` 하단 "최근 실행 결과" 표 갱신
+
+자기 시나리오 파일 하단의 표에 **이번 RUN 1줄 추가** (또는 기존 표가 빈 양식이면 첫 줄로 채움). 형식:
+
+```markdown
+| 일시 | 환경 | 결과 | RUN-ID | 비고 |
+|---|---|---|---|---|
+| 2026-05-02 14:30 | dev | ✅ 4/5 | RUN-20260502-1430-dev | TC-04 인증 메일 fail |
+| (이전 행들...) |
+```
+
+최신이 위로. 행 5개까지만 유지 (오래된 건 잘라냄).
+
+### 4) 메인에 반환할 요약 (300단어 이내)
 
 다음 구조로만 반환. **불필요한 상세 내용·스크린샷 본문·DOM 덤프 절대 포함 금지**.
 

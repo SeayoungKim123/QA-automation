@@ -18,8 +18,8 @@ window.QA_DATA = {
     fail: 3,
     open_issues: 3,
     issues_breakdown: "P0 2건 · P1 1건",
-    scenario_count: 3,
-    tc_count: 12
+    scenario_count: 4,
+    tc_count: 15
   },
 
   scenarios: [
@@ -54,6 +54,16 @@ window.QA_DATA = {
         { id: "TC-02", name: "결제 한도 초과", status: "PASS", tag: "" },
         { id: "TC-03", name: "카드 거절 처리", status: "FAIL", tag: "3회 연속" },
         { id: "TC-04", name: "결제 취소 후 상태 반영", status: "FAIL", tag: "신규" }
+      ]
+    },
+    {
+      id: "04-마이페이지",
+      pass: 0,
+      total: 3,
+      tcs: [
+        { id: "TC-01", name: "프로필 정보 수정", status: "—", tag: "" },
+        { id: "TC-02", name: "비밀번호 변경", status: "—", tag: "" },
+        { id: "TC-03", name: "계정 탈퇴", status: "—", tag: "" }
       ]
     }
   ],
